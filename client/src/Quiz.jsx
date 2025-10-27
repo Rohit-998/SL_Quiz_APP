@@ -4,14 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 
-const API_BASE = "http://localhost:8747/api";
+const API_BASE = "https://sl-quiz-app.onrender.com/api";
 
 const categories = {
   Technical: ["java", "c", "python"],
   "Non-Technical": ["gk"],
 };
 
-export default function QuizApp() {
+export default function Quiz() {
   const [stage, setStage] = useState("home");
   const [selectedMain, setSelectedMain] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);

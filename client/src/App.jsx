@@ -1,11 +1,14 @@
 import React from "react";
-import QuizA from "./quiz";
+import Quiz from "./quiz";
+
+
+
 
 
 function App() {
   return (
     <div>
-      <QuizA/>
+      <Quiz />
     </div>
   );
 }
