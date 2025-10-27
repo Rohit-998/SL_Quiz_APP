@@ -9,7 +9,7 @@ matplotlib.use("Agg")  # ✅ Prevent Tkinter thread errors
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "https://sl-quiz-app.vercel.app"}})
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
