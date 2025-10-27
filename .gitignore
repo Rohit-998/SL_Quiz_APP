@@ -1,0 +1,49 @@
+# ---- Node / React ----
+client/node_modules/
+client/.env
+client/.env.local
+client/.env.*.local
+client/dist/
+client/build/
+
+# Vite specific
+client/.vite/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor junk
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Coverage / Testing
+coverage/
+*.lcov
+
+# ---- Python Server ----
+server/__pycache__/
+server/*.pyc
+server/.env
+server/instance/
+
+# Python runtime
+*.egg-info/
+.eggs/
+.venv/
+env/
+venv/
+
+# ---- Local & System Files ----
+Thumbs.db
+*.tmp
+
+# ---- Production Deployment Files ----
+# If pushing to Heroku/ECS, keep Procfile
+# Ignore any local dev artifacts
+*.sqlite3

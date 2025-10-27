@@ -1,0 +1,4 @@
+question,option1,option2,option3,option4,answer
+Which keyword is used to prevent a method from being overridden?,final,static,abstract,private,final
+What is the default value of a boolean variable in Java?,true,false,0,null,false
+Which of these is NOT a Java feature?,Object-oriented,Use of pointers,Platform independent,Dynamic,Use of pointers

@@ -1,0 +1,4 @@
+question,option1,option2,option3,option4,answer
+What is the format specifier for an integer in C?,%f,%c,%d,%s,%d
+Which keyword is used to allocate memory dynamically?,malloc,alloc,new,calloc,malloc
+What does the 'break' statement do in a loop?,Exits the loop,Skips the current iteration,Ends the program,Restarts the loop,Exits the loop
