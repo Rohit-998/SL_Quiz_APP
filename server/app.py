@@ -75,6 +75,8 @@ def get_questions():
     category = request.args.get("category", "").lower()
     if not category or category not in quiz_data:
         return jsonify({"error": "Invalid category"}), 400
+    
+    quiz_data[category]["attempts"].clear()
 
     questions = quiz_data[category]["questions"]
     return jsonify([
