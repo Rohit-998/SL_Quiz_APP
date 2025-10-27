@@ -9,23 +9,29 @@ matplotlib.use("Agg")  # ✅ Prevent Tkinter thread errors
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "https://sl-quiz-app.vercel.app"}})
+CORS(app, resources={r"/api/*": {"origins": "*"}})  # Allow all origins for testing
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
 quiz_data = {}
 CATEGORIES = ["java", "c", "python", "gk"]
 
 
 def load_questions():
+    """Load all CSVs into memory."""
     global quiz_data
     quiz_data = {}
 
+    print("=== Loading Quiz Files ===")
     for category in CATEGORIES:
         try:
             filename = os.path.join(BASE_DIR, f"{category}.csv")
+            if not os.path.exists(filename):
+                print(f"⚠️ Missing file: {filename}")
+                quiz_data[category] = {"questions": [], "attempts": []}
+                continue
+
             df = pd.read_csv(filename)
-            df = df.sample(frac=1).reset_index(drop=True)  # shuffle
+            df = df.sample(frac=1).reset_index(drop=True)  # shuffle rows
 
             temp_questions = []
             for i, row in df.iterrows():
@@ -38,36 +44,43 @@ def load_questions():
                 np.random.shuffle(options)
 
                 temp_questions.append({
-                    "id": f"{category}_{i}",  
+                    "id": f"{category}_{i}",
                     "question": str(row["question"]),
                     "options": options,
                     "answer": str(row["answer"]),
                 })
 
             quiz_data[category] = {"questions": temp_questions, "attempts": []}
-            print(f"✅ Loaded {len(temp_questions)} → {filename}")
+            print(f"✅ Loaded {len(temp_questions)} questions from {filename}")
 
-        except FileNotFoundError:
-            print(f" Missing: {category}.csv")
-            quiz_data[category] = {"questions": [], "attempts": []}
+        except Exception as e:
+            print(f"❌ Error loading {category}.csv: {e}")
 
+    print("✅ Categories available:", list(quiz_data.keys()))
+    print("===========================")
+
+
+@app.route("/")
+def home():
+    return jsonify({"message": "Quiz API is running!"})
+
+
+@app.route("/api/categories", methods=["GET"])
+def get_categories():
+    return jsonify(list(quiz_data.keys()))
 
 
 @app.route("/api/questions", methods=["GET"])
 def get_questions():
-    category = request.args.get("category")
+    category = request.args.get("category", "").lower()
     if not category or category not in quiz_data:
         return jsonify({"error": "Invalid category"}), 400
 
+    questions = quiz_data[category]["questions"]
     return jsonify([
-        {
-            "id": q["id"],
-            "question": q["question"],
-            "options": q["options"]
-        }
-        for q in quiz_data[category]["questions"]
+        {"id": q["id"], "question": q["question"], "options": q["options"]}
+        for q in questions
     ])
-
 
 
 @app.route("/api/submit", methods=["POST"])
@@ -81,7 +94,7 @@ def submit_answer():
         return jsonify({"error": "Invalid category"}), 400
 
     try:
-        q = next(x for x in quiz_data[category]["questions"] if str(x["id"]) == question_id)
+        q = next(x for x in quiz_data[category]["questions"] if x["id"] == question_id)
         correct = (user_answer == q["answer"])
 
         quiz_data[category]["attempts"].append({
@@ -89,22 +102,20 @@ def submit_answer():
             "is_correct": correct,
             "time_taken": data.get("time_taken", 0)
         })
-        
-        message = " Correct!" if correct else f" Incorrect. Correct: {q['answer']}"
 
+        msg = "Correct!" if correct else f"Incorrect. Correct: {q['answer']}"
         return jsonify({
             "correct": correct,
             "correct_answer": q["answer"],
-            "message": message
+            "message": msg
         })
-
     except StopIteration:
         return jsonify({"error": "Question not found"}), 404
 
 
 @app.route("/api/stats", methods=["GET"])
 def get_stats():
-    category = request.args.get("category")
+    category = request.args.get("category", "").lower()
     if not category or category not in quiz_data:
         return jsonify({"error": "Invalid category"}), 400
 
@@ -129,11 +140,12 @@ def get_stats():
     plt.savefig(buf, format="png", bbox_inches="tight", transparent=True)
     buf.seek(0)
     plt.close()
-
     return send_file(buf, mimetype="image/png")
 
 
+# ✅ Load questions at startup (for Render)
+load_questions()
 
 if __name__ == "__main__":
-    load_questions()
-    app.run(debug=True, port=8747)
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host="0.0.0.0", port=port)
