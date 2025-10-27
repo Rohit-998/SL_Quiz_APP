@@ -1,5 +1,5 @@
 import React from "react";
-import Quiz from "./quiz";
+import Quiz from "./Quiz";
 
 
 
