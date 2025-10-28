@@ -5,11 +5,11 @@ import pandas as pd
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 import matplotlib
-matplotlib.use("Agg")  # ✅ Prevent Tkinter thread errors
+matplotlib.use("Agg")  
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})  # Allow all origins for testing
+CORS(app, resources={r"/api/*": {"origins": "*"}})  
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 quiz_data = {}
@@ -26,12 +26,12 @@ def load_questions():
         try:
             filename = os.path.join(BASE_DIR, f"{category}.csv")
             if not os.path.exists(filename):
-                print(f"⚠️ Missing file: {filename}")
+                print(f" Missing file: {filename}")
                 quiz_data[category] = {"questions": [], "attempts": []}
                 continue
 
             df = pd.read_csv(filename)
-            df = df.sample(frac=1).reset_index(drop=True)  # shuffle rows
+            df = df.sample(frac=1).reset_index(drop=True) 
 
             temp_questions = []
             for i, row in df.iterrows():
@@ -54,9 +54,9 @@ def load_questions():
             print(f"✅ Loaded {len(temp_questions)} questions from {filename}")
 
         except Exception as e:
-            print(f"❌ Error loading {category}.csv: {e}")
+            print(f" Error loading {category}.csv: {e}")
 
-    print("✅ Categories available:", list(quiz_data.keys()))
+    print("Categories available:", list(quiz_data.keys()))
     print("===========================")
 
 
@@ -145,7 +145,6 @@ def get_stats():
     return send_file(buf, mimetype="image/png")
 
 
-# ✅ Load questions at startup (for Render)
 load_questions()
 
 if __name__ == "__main__":
