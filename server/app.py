@@ -51,7 +51,7 @@ def load_questions():
                 })
 
             quiz_data[category] = {"questions": temp_questions, "attempts": []}
-            print(f"✅ Loaded {len(temp_questions)} questions from {filename}")
+            print(f"Loaded {len(temp_questions)} questions from {filename}")
 
         except Exception as e:
             print(f" Error loading {category}.csv: {e}")
