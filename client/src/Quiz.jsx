@@ -261,7 +261,13 @@ export default function Quiz() {
             </Button>
           </motion.div>
         )}
+        
       </AnimatePresence>
+      <footer>
+        <p className="text-sm text-purple-300 mt-6">
+          Made By Rohit Agrawal. Bhoomi Batra. Rohit Mhaski. Marmika Kirnapure
+        </p>
+      </footer>
     </div>
   );
 }
